@@ -158,3 +158,12 @@ php artisan test
 ```bash
 docker-compose exec app php artisan test
 ```
+=================================================
+
+## Adding New Providers
+
+To add a new data provider:
+
+1. Create a new provider class implementing `DataProviderInterface`
+2. Register the provider in `DataProviderFactory`
+3. Add the provider's status codes to `TransactionStatus` enum
