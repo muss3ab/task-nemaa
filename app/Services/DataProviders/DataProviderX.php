@@ -8,7 +8,12 @@ use App\Enums\TransactionStatus;
 class DataProviderX implements DataProviderInterface
 {
     private array $filters = [];
-    private const JSON_PATH = 'storage/app/DataProviderX.json';
+    private string $jsonPath;
+
+    public function __construct()
+    {
+        $this->jsonPath = storage_path('app/DataProviderX.json');
+    }
 
     public function getName(): string
     {
@@ -17,17 +22,27 @@ class DataProviderX implements DataProviderInterface
 
     public function getTransactions(): \Generator
     {
-        $handle = fopen(self::JSON_PATH, 'r');
-        
-        while (($line = fgets($handle)) !== false) {
-            $transaction = json_decode($line, true);
-            
-            if ($this->passesFilters($transaction)) {
-                yield $this->transformToDTO($transaction);
-            }
+        if (!file_exists($this->jsonPath)) {
+            throw new \RuntimeException("Data file not found: {$this->jsonPath}");
         }
+
+        $handle = fopen($this->jsonPath, 'r');
         
-        fclose($handle);
+        if ($handle === false) {
+            throw new \RuntimeException("Unable to open file: {$this->jsonPath}");
+        }
+
+        try {
+            while (($line = fgets($handle)) !== false) {
+                $transaction = json_decode($line, true);
+                
+                if ($this->passesFilters($transaction)) {
+                    yield $this->transformToDTO($transaction);
+                }
+            }
+        } finally {
+            fclose($handle);
+        }
     }
 
     private function transformToDTO(array $data): UserTransactionDTO

@@ -8,7 +8,12 @@ use App\Enums\TransactionStatus;
 class DataProviderY implements DataProviderInterface
 {
     private array $filters = [];
-    private const JSON_PATH = 'storage/app/DataProviderY.json';
+    private string $jsonPath;
+
+    public function __construct()
+    {
+        $this->jsonPath = storage_path('app/DataProviderY.json');
+    }
 
     public function getName(): string
     {
@@ -17,7 +22,7 @@ class DataProviderY implements DataProviderInterface
 
     public function getTransactions(): \Generator
     {
-        $handle = fopen(self::JSON_PATH, 'r');
+        $handle = fopen($this->jsonPath, 'r');
         
         while (($line = fgets($handle)) !== false) {
             $transaction = json_decode($line, true);

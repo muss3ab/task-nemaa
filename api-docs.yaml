@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: 1.0.0
+paths:
+  /api/v1/users:
+    get:
+      parameters:
+        - name: provider
+          in: query
+          schema:
+            type: string
+            enum: [DataProviderX, DataProviderY]
+        - name: statusCode
+          in: query
+          schema:
+            type: string
+            enum: [authorised, decline, refunded]
+        - name: balanceMin
+          in: query
+          schema:
+            type: number
+        - name: balanceMax
+          in: query
+          schema:
+            type: number
+        - name: currency
+          in: query
+          schema:
+            type: string 
